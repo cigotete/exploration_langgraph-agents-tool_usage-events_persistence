@@ -88,3 +88,11 @@ abot = Agent(prompt)
 
 result = abot("How much does a toy poodle weigh?")
 print(result)
+
+# The idea here is that observation comes from a process used by agent to get this information (aka: a function).
+# Due to still is not implemented, the user gives the data for the model.
+result = average_dog_weight("Toy Poodle") # Expected future behavior is that agent call this function.
+next_prompt = "Observation: {}".format(result)
+abot(next_prompt) # test prompt added as emulation that the information comes from function.
+abot.messages
+print(abot.messages)
