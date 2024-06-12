@@ -96,3 +96,21 @@ next_prompt = "Observation: {}".format(result)
 abot(next_prompt) # test prompt added as emulation that the information comes from function.
 abot.messages
 print(abot.messages)
+
+abot = Agent(prompt) # Reseted message stack.
+print(abot.messages) 
+question = """I have 2 dogs, a border collie and a scottish terrier. \What is their combined weight"""
+abot(question)
+
+print("=" * 50)
+
+next_prompt = "Observation: {}".format(average_dog_weight("Border Collie"))
+print(next_prompt)
+abot(next_prompt)
+next_prompt = "Observation: {}".format(average_dog_weight("Scottish Terrier"))
+print(next_prompt)
+abot(next_prompt)
+next_prompt = "Observation: {}".format(eval("37 + 20"))
+print(next_prompt)
+abot(next_prompt)
+print(abot.messages)
