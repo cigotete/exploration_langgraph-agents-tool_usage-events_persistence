@@ -8,9 +8,9 @@ from langchain_core.messages import AnyMessage, SystemMessage, HumanMessage, Too
 from langchain_openai import ChatOpenAI
 from langchain_community.tools.tavily_search import TavilySearchResults
 
-tool = TavilySearchResults(max_results=4) #increased number of results
-print(type(tool))
-print(tool.name)
+tool = TavilySearchResults(max_results=4)
+#print(type(tool))
+#print(tool.name)
 
 class AgentState(TypedDict):
     messages: Annotated[list[AnyMessage], operator.add]
@@ -65,3 +65,40 @@ class Agent:
             results.append(ToolMessage(tool_call_id=t['id'], name=t['name'], content=str(result)))
         print("Back to the model!")
         return {'messages': results}
+    
+
+prompt = """You are a smart research assistant. Use the search engine to look up information. \
+You are allowed to make multiple calls (either together or in sequence). \
+Only look up information when you are sure of what you want. \
+If you need to look up some information before asking a follow up question, you are allowed to do that!
+"""
+
+model = ChatOpenAI(model="gpt-3.5-turbo")
+abot = Agent(model, [tool], system=prompt)
+
+#from IPython.display import Image
+#Image(abot.graph.get_graph().draw_png())
+
+messages = [HumanMessage(content="What is the weather in sf?")]
+result = abot.graph.invoke({"messages": messages})
+
+print("="*50)
+print(result['messages'][0].content)
+print(result['messages'][1].content)
+print(result['messages'][2].content)
+
+messages = [HumanMessage(content="What is the weather in SF and LA?")]
+result = abot.graph.invoke({"messages": messages})
+
+print("="*50)
+print(result['messages'][-1].content)
+
+print("="*50)
+query = "Who won the super bowl in 2024? In what state is the winning team headquarters located? \
+What is the GDP of that state? Answer each question." 
+messages = [HumanMessage(content=query)]
+
+model = ChatOpenAI(model="gpt-4o")
+abot = Agent(model, [tool], system=prompt)
+result = abot.graph.invoke({"messages": messages})
+print(result['messages'][-1].content)
