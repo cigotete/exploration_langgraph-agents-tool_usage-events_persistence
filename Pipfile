@@ -13,6 +13,7 @@ langgraph = "*"
 tavily-python = "*"
 beautifulsoup4 = "*"
 duckduckgo-search = "*"
+aiosqlite = "*"
 
 [dev-packages]
 

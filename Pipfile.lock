@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "5babb1d05b056edef34cc929823c04f467a8ad55da99c6df098e4eb1c6915c23"
+            "sha256": "cd4e2e757af58ed0b8272df08ccebd0d0ba78be58460dbbb637534a09c8ed32a"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -105,6 +105,15 @@
             ],
             "markers": "python_version >= '3.7'",
             "version": "==1.3.1"
+        },
+        "aiosqlite": {
+            "hashes": [
+                "sha256:36a1deaca0cac40ebe32aac9977a6e2bbc7f5189f23f4a54d5908986729e5bd6",
+                "sha256:6d35c8c256637f4672f843c31021464090805bf925385ac39473fb16eaaca3d7"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.8'",
+            "version": "==0.20.0"
         },
         "annotated-types": {
             "hashes": [
@@ -481,11 +490,11 @@
         },
         "langchain": {
             "hashes": [
-                "sha256:5dc33cd9c8008693d328b7cb698df69073acecc89ad9c2a95f243b3314f8d834",
-                "sha256:81962cc72cce6515f7bd71e01542727870789bf8b666c6913d85559080c1a201"
+                "sha256:a04813215c30f944df006031e2febde872af8fab628dcee825d969e07b6cd621",
+                "sha256:e704b5b06222d5eba2d02c76f891321d1bac8952ed54e093831b2bdabf99dcd5"
             ],
             "markers": "python_version < '4.0' and python_full_version >= '3.8.1'",
-            "version": "==0.2.3"
+            "version": "==0.2.4"
         },
         "langchain-community": {
             "hashes": [
