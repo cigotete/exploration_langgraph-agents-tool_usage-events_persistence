@@ -10,6 +10,9 @@ langchain-core = "*"
 langchain-openai = "*"
 langchain-community = "*"
 langgraph = "*"
+tavily-python = "*"
+beautifulsoup4 = "*"
+duckduckgo-search = "*"
 
 [dev-packages]
 
