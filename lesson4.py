@@ -61,31 +61,28 @@ If you need to look up some information before asking a follow up question, you 
 model = ChatOpenAI(model="gpt-4o")
 abot = Agent(model, [tool], system=prompt, checkpointer=memory)
 
-print("x"*50)
-messages = [HumanMessage(content="What is the weather in sf?")]
-thread = {"configurable": {"thread_id": "1"}}  # Keep track of different threads. This case is 1
-for event in abot.graph.stream({"messages": messages}, thread): # instead 'invoke', using 'stream'.
-    for v in event.values():
-        print(v['messages'])
-        print("-"*50)
 
-print("x"*50)
-messages = [HumanMessage(content="What about in la?")] # The question alludes to the previous question.
-thread = {"configurable": {"thread_id": "1"}}
-for event in abot.graph.stream({"messages": messages}, thread):
-    for v in event.values():
-        print(v)
+## Streaming tokens (iterating over a different type of events that represents updates from the underlying stream)
+from langgraph.checkpoint.aiosqlite import AsyncSqliteSaver
 
-print("x"*50)
-messages = [HumanMessage(content="Which one is warmer?")] # The question alludes to two last responses.
-thread = {"configurable": {"thread_id": "1"}}
-for event in abot.graph.stream({"messages": messages}, thread):
-    for v in event.values():
-        print(v)
+async def stream_tokens():
+    print("="*50)
+    print("Streaming tokens")
+    print("="*50)
 
-print("x"*50)
-messages = [HumanMessage(content="Which one is warmer?")]
-thread = {"configurable": {"thread_id": "2"}} # Thread here is different, so model has no memory related.
-for event in abot.graph.stream({"messages": messages}, thread):
-    for v in event.values():
-        print(v)
+    memory = AsyncSqliteSaver.from_conn_string(":memory:")
+    abot = Agent(model, [tool], system=prompt, checkpointer=memory)
+
+    messages = [HumanMessage(content="What is the weather in SF?")]
+    thread = {"configurable": {"thread_id": "4"}}
+    async for event in abot.graph.astream_events({"messages": messages}, thread, version="v1"):
+        kind = event["event"]
+        if kind == "on_chat_model_stream":
+            content = event["data"]["chunk"].content
+            if content:
+                # Explanation about empty content
+                print(content, end="|")
+
+import asyncio
+
+asyncio.run(stream_tokens())
