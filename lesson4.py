@@ -51,3 +51,41 @@ class Agent:
             results.append(ToolMessage(tool_call_id=t['id'], name=t['name'], content=str(result)))
         print("Back to the model!")
         return {'messages': results}
+
+
+prompt = """You are a smart research assistant. Use the search engine to look up information. \
+You are allowed to make multiple calls (either together or in sequence). \
+Only look up information when you are sure of what you want. \
+If you need to look up some information before asking a follow up question, you are allowed to do that!
+"""
+model = ChatOpenAI(model="gpt-4o")
+abot = Agent(model, [tool], system=prompt, checkpointer=memory)
+
+print("x"*50)
+messages = [HumanMessage(content="What is the weather in sf?")]
+thread = {"configurable": {"thread_id": "1"}}  # Keep track of different threads. This case is 1
+for event in abot.graph.stream({"messages": messages}, thread): # instead 'invoke', using 'stream'.
+    for v in event.values():
+        print(v['messages'])
+        print("-"*50)
+
+print("x"*50)
+messages = [HumanMessage(content="What about in la?")] # The question alludes to the previous question.
+thread = {"configurable": {"thread_id": "1"}}
+for event in abot.graph.stream({"messages": messages}, thread):
+    for v in event.values():
+        print(v)
+
+print("x"*50)
+messages = [HumanMessage(content="Which one is warmer?")] # The question alludes to two last responses.
+thread = {"configurable": {"thread_id": "1"}}
+for event in abot.graph.stream({"messages": messages}, thread):
+    for v in event.values():
+        print(v)
+
+print("x"*50)
+messages = [HumanMessage(content="Which one is warmer?")]
+thread = {"configurable": {"thread_id": "2"}} # Thread here is different, so model has no memory related.
+for event in abot.graph.stream({"messages": messages}, thread):
+    for v in event.values():
+        print(v)
