@@ -199,6 +199,30 @@ for state in abot.graph.get_state_history(thread):
 print("State to return -3:" + "-"*50)
 to_replay = states[-3]
 
+print("Printing events:" + "-"*50)
 for event in abot.graph.stream(None, to_replay.config):
     for k, v in event.items():
         print(v)
+
+
+### Go back in time and edit.
+print("*"*50)
+print("Modifying State.")
+print("*"*50)
+
+print("Printing last state modified:" + "-"*50)
+print(to_replay)
+
+print("Updating -1 state:" + "-"*50)
+_id = to_replay.values['messages'][-1].tool_calls[0]['id']
+to_replay.values['messages'][-1].tool_calls = [{'name': 'tavily_search_results_json',
+  'args': {'query': 'current weather in LA, accuweather'},
+  'id': _id}]
+
+branch_state = abot.graph.update_state(to_replay.config, to_replay.values)
+
+print("Printing events:" + "-"*50)
+for event in abot.graph.stream(None, branch_state):
+    for k, v in event.items():
+        if k != "__end__":
+            print(v)
