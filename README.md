@@ -13,6 +13,7 @@ Based on LangGraph course https://learn.deeplearning.ai/courses/ai-agents-in-lan
 - Checkpoint: State management of a thread.
 - Thread: Separate sessions of a graph
 - Configuration: Values that you can control at runtime.
+- Reducers: How to apply Node outputs to the current State.
 
 ##
 More info about LangGraph concepts: https://langchain-ai.github.io/langgraph/concepts/
