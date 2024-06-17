@@ -98,7 +98,7 @@ model = ChatOpenAI(model="gpt-3.5-turbo")
 abot = Agent(model, [tool], system=prompt, checkpointer=memory)
 
 
-
+"""
 messages = [HumanMessage(content="Whats the weather in SF?")]
 thread = {"configurable": {"thread_id": "1"}}
 # Streaming back responses 
@@ -140,4 +140,65 @@ while abot.graph.get_state(thread).next:
     for event in abot.graph.stream(None, thread):
         for v in event.values():
             print(v)
+"""
 
+# Modify State.
+print("*"*50)
+print("Modifying State.")
+print("*"*50)
+messages = [HumanMessage("Whats the weather in LA?")]
+thread = {"configurable": {"thread_id": "3"}}
+for event in abot.graph.stream({"messages": messages}, thread):
+    for v in event.values():
+        print(v)
+
+print("abot.graph.get_state(thread)" + "-"*50)
+print(abot.graph.get_state(thread))
+
+print("abot.graph.get_state_history(thread)" + "-"*50)
+states = []
+for state in abot.graph.get_state_history(thread):
+    print(state)
+    print('--')
+    states.append(state)
+
+print("current_values.values['messages'][-1]" + "-"*50)
+current_values = abot.graph.get_state(thread)
+print(current_values.values['messages'][-1])
+
+print("current_values.values['messages'][-1].tool_calls" + "-"*50)
+print(current_values.values['messages'][-1].tool_calls)
+
+# Updating tool query
+print("Updating tool query:" + "-"*50)
+_id = current_values.values['messages'][-1].tool_calls[0]['id']
+current_values.values['messages'][-1].tool_calls = [
+    {'name': 'tavily_search_results_json',
+  'args': {'query': 'current weather in Louisiana'},
+  'id': _id}
+]
+
+# Updating tool at state.
+print("Updating tool on state." + "-"*50)
+abot.graph.update_state(thread, current_values.values)
+
+print("abot.graph.get_state(thread)" + "-"*50)
+print(abot.graph.get_state(thread))
+
+for event in abot.graph.stream(None, thread):
+    for v in event.values():
+        print(v)
+
+print("abot.graph.get_state_history(thread)" + "-"*50)
+states = []
+for state in abot.graph.get_state_history(thread):
+    print(state)
+    print('--')
+    states.append(state)
+
+print("State to return -3:" + "-"*50)
+to_replay = states[-3]
+
+for event in abot.graph.stream(None, to_replay.config):
+    for k, v in event.items():
+        print(v)
