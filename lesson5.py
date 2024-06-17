@@ -97,3 +97,47 @@ If you need to look up some information before asking a follow up question, you 
 model = ChatOpenAI(model="gpt-3.5-turbo")
 abot = Agent(model, [tool], system=prompt, checkpointer=memory)
 
+
+
+messages = [HumanMessage(content="Whats the weather in SF?")]
+thread = {"configurable": {"thread_id": "1"}}
+# Streaming back responses 
+for event in abot.graph.stream({"messages": messages}, thread):
+    for v in event.values():
+        print(v)
+
+
+abot.graph.get_state(thread)
+abot.graph.get_state(thread).next
+
+### Continue after interrupt.
+print("*"*50)
+print("Continue after interrupt.")
+print("*"*50)
+
+for event in abot.graph.stream(None, thread):
+    for v in event.values():
+        print(v)
+
+abot.graph.get_state(thread)
+abot.graph.get_state(thread).next
+
+# Testing in a loop (new thread).
+print("*"*50)
+print("Testing in a loop (new thread).")
+print("*"*50)
+messages = [HumanMessage("Whats the weather in LA?")]
+thread = {"configurable": {"thread_id": "2"}}
+for event in abot.graph.stream({"messages": messages}, thread):
+    for v in event.values():
+        print(v)
+while abot.graph.get_state(thread).next:
+    print("\n", abot.graph.get_state(thread),"\n")
+    _input = input("proceed?")
+    if _input != "y":
+        print("aborting")
+        break
+    for event in abot.graph.stream(None, thread):
+        for v in event.values():
+            print(v)
+
