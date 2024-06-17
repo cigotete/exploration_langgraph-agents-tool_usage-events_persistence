@@ -226,3 +226,34 @@ for event in abot.graph.stream(None, branch_state):
     for k, v in event.items():
         if k != "__end__":
             print(v)
+
+
+### Adding message (a mockup) as a model response for a state
+"""Adding message (a mockup) as a model response for a state \
+at a given time.
+Here is implemented "as_node" parameter, to declare that is actually \
+a response (in this case, a mockup response). We are updating \
+the action node as a real action response. \
+Before is added this message, the current state of this graph is \
+about to go into the action node.
+"""
+print("PRinting last state modified:" + "-"*50)
+print(to_replay)
+
+_id = to_replay.values['messages'][-1].tool_calls[0]['id']
+
+state_update = {"messages": [ToolMessage(
+    tool_call_id=_id,
+    name="tavily_search_results_json",
+    content="54 degree celcius",
+)]}
+
+branch_and_add = abot.graph.update_state(
+    to_replay.config, 
+    state_update, 
+    as_node="action")
+
+print("Printing events:" + "-"*50)
+for event in abot.graph.stream(None, branch_and_add):
+    for k, v in event.items():
+        print(v)
