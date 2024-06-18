@@ -15,6 +15,7 @@ beautifulsoup4 = "*"
 duckduckgo-search = "*"
 aiosqlite = "*"
 ipython = "*"
+gradio = "*"
 
 [dev-packages]
 
